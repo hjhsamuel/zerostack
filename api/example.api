@@ -1,0 +1,27 @@
+syntax = "v1"
+
+type GetUserReq {
+    ID uint `uri:"id"`  // 用户id
+}
+
+type GetUserRsp {
+    UserInfo
+}
+
+type UserInfo {
+    ID uint `json:"id"`
+    Name string `json:"name"`   // 名称
+    Email string `json:"email"` // 邮箱
+}
+
+@route (
+    tag: User
+    auth: true
+)
+group user {
+    @doc (
+        summary "获取用户详情"
+    )
+    @handler GetUser
+    get "/:id" (GetUserReq) returns (GetUserRsp)
+}
