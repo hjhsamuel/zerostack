@@ -1,4 +1,4 @@
-package parser
+package api
 
 type APIDefinition struct {
 	Syntax string

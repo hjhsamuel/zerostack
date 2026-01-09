@@ -1,4 +1,4 @@
-package parser
+package api
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 )
 
 func TestParseAPIFile(t *testing.T) {
-	var apiFilePath string = "../../api/example.api"
+	var apiFilePath string = "../../cmd/example.api"
 
 	p, err := NewParser(apiFilePath)
 	if err != nil {

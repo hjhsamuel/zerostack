@@ -1,4 +1,4 @@
-package parser
+package api
 
 import (
 	"fmt"
