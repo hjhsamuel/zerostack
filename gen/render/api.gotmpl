@@ -1,0 +1,25 @@
+// Code generate by zerostack. DO NOT EDIT.
+
+package api
+
+import (
+    "github.com/gin-gonic/gin"
+    gp "github.com/hjhsamuel/gocommon/gin_plugin"
+
+    "{{.module}}/internal/server"
+    {{- range $index, $item := .syntaxs}}
+    {{$item.syntax}} "{{.module}}/internal/api/{{$item.syntax}}"
+    {{- end}}
+)
+
+func Route(srv *server.Server, e *gin.Engine) {
+    e.Use(gin.Recovery)
+    e.Use(gp.ReqLogger)
+    e.Use(gp.Auth)
+
+    group := e.Group("/{{.service}}")
+
+    {{- range $index, $item := .syntaxs}}
+    {{$item.syntax}}.Route(srv, group)
+    {{- end}}
+}

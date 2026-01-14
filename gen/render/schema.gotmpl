@@ -1,0 +1,11 @@
+// Code generate by zerostack. DO NOT EDIT.
+
+package schema
+
+{{- range $index, $item := .types}}
+type {{$item.name}} struct {
+{{- range $findex, $field := $item.fields}}
+    {{$field.name}} {{$field.type}} {{if $field.tags}}`{{range $tindex, $tag := $field.tags}}{{if $tindex}} {{end}}{{$tag.key}}:"{{$tag.val}}"{{end}}`{{end}} {{if $field.comment}}// {{$field.comment}}{{end}}
+{{- end}}
+}
+{{- end}}

@@ -1,0 +1,44 @@
+// Code generate by zerostack. Safe to edit.
+
+package dao
+
+import (
+    "github.com/hjhsamuel/gocommon/database"
+    "github.com/sirupsen/logrus"
+    "gorm.io/gorm"
+)
+
+type MysqlDao struct {
+    *gorm.DB
+}
+
+func NewMysqlDao(log *logrus.Logger, info *database.BackendConfig) (Dao, error) {
+    // TODO
+    // set source models
+    opt := &database.MysqlOptions{
+        Log:         log,
+        Debug:       info.Debug,
+        MaxIdleConn: info.MaxIdleConn,
+        MaxOpenConn: info.MaxOpenConn,
+        Source: &database.MysqlDialector{
+            SourceInfo: *info.Sources,
+            Objs:       []any{},
+        },
+    }
+    if len(info.Replicas) != 0 {
+        // TODO
+        // set replica models
+        opt.Replicase = &database.MysqlDialector{
+            SourceInfo: database.SourceInfo{
+                Infos: info.Replicas,
+            },
+            Objs: []any{},
+        }
+    }
+
+    d, err := database.NewMysqlClient(opt)
+    if err != nil {
+        return nil, err
+    }
+    return &MysqlDao{DB: d}, nil
+}

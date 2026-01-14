@@ -20,7 +20,7 @@ type UserInfo {
 )
 group user {
     @doc (
-        summary "获取用户详情"
+        summary: "获取用户详情"
     )
     @handler GetUser
     get "/:id" (GetUserReq) returns (GetUserRsp)

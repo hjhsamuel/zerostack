@@ -18,4 +18,8 @@ func InitService(_ *cobra.Command, _ []string) error {
 	if err != nil {
 		return err
 	}
+	srvName, err := gomod.GetServiceName(moduleName)
+	if err != nil {
+		return err
+	}
 }

@@ -1,0 +1,37 @@
+// Code generate by zerostack. DO NOT EDIT.
+
+package {{.syntax}}
+
+import (
+    "github.com/gin-gonic/gin"
+    gp "github.com/hjhsamuel/gocommon/gin_plugin"
+
+    "{{.module}}/internal/server"
+)
+
+type Api struct {
+    srv *server.Server
+}
+
+func newApi(srv *server.Server) *Api {
+    return &Api{srv: srv}
+}
+
+func Route(srv *server.Server, g *gin.RouterGroup) {
+    api := newApi(srv)
+    group := g.Group("/{{.syntax}}")
+
+    {{- range $index, $item := .groups}}
+    {{$item.name}}(api, group)
+    {{- end}}
+}
+
+{{- range $index, $item := .groups}}
+func {{$item.name}}(api *Api, g *gin.RouterGroup) {
+    group := g.Group("/{{$item.name}}")
+
+    {{- range $hindex, $handler := $item.handlers}}
+    group.{{$handler.method}}("{{$handler.path}}", gp.GetHandler(api.{{$handler.handler}}, {{$item.auth}}))
+    {{- end}}
+}
+{{- end}}

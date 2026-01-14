@@ -15,8 +15,13 @@ type TypeDef struct {
 type Field struct {
 	Name    string
 	Type    string
-	Tag     string
+	Tags    []*Tag
 	Comment string
+}
+
+type Tag struct {
+	Key string
+	Val string
 }
 
 type Group struct {

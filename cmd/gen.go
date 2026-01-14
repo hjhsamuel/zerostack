@@ -1,10 +1,5 @@
 package cmd
 
-import _ "embed"
-
-//go:embed example.api
-var apiExample string
-
 var (
 	// VarBoolInit initialization service or not
 	VarBoolInit bool

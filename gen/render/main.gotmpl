@@ -1,0 +1,41 @@
+// Code generate by zerostack. Safe to edit.
+
+package main
+
+import (
+    "flag"
+    "fmt"
+    "log"
+    "os"
+
+    "{{.module}}/app"
+)
+
+var (
+    Version = "dev"
+    CommitID = ""
+)
+
+func printVersion() {
+    fmt.Printf(`{{.service}}
+Version: %s
+CommitID: %s
+`, Version, CommitID)
+}
+
+func main() {
+    var (
+        version = flag.Bool("v", false, "version")
+        path = flag.String("c", "", "config file")
+    )
+    flag.Parse()
+
+    if *version {
+        printVersion()
+        os.Exit(0)
+    }
+
+    if err := app.Start(*path); err != nil {
+        log.Fatal(err)
+    }
+}

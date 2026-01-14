@@ -1,0 +1,25 @@
+// Code generate by zerostack. Safe to edit.
+
+package server
+
+import (
+    "{{.module}}/internal/dao"
+)
+
+type Server struct {
+    d dao.Dao
+}
+
+func (s *Server) Start() error {
+    // TODO
+    return nil
+}
+
+func (s *Server) Close() error {
+    // TODO
+    return nil
+}
+
+func NewServer(d dao.Dao) (*Server, error) {
+    return &Server{d: d}, nil
+}

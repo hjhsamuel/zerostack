@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"regexp"
 
 	"golang.org/x/mod/modfile"
 	"golang.org/x/mod/module"
@@ -20,6 +21,19 @@ func ParseModuleName(name string) (string, error) {
 		return "", err
 	}
 	return name, nil
+}
+
+func GetServiceName(name string) (string, error) {
+	baseName := filepath.Base(name)
+	re := regexp.MustCompile(`^(?P<name>[a-z]+[\w\-]*).*$`)
+	rsp := re.FindStringSubmatch(baseName)
+	for index, item := range re.SubexpNames() {
+		if index == 0 || item == "" {
+			continue
+		}
+		return rsp[index], nil
+	}
+	return "", errors.New("service name not found")
 }
 
 func ParseModfile(path string) (*modfile.File, error) {

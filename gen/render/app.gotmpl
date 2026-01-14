@@ -1,0 +1,80 @@
+// Code generate by zerostack. Safe to edit.
+
+package app
+
+import (
+    "context"
+    "fmt"
+    "net"
+    "net/http"
+    "os"
+    "os/signal"
+    "strconv"
+    "syscall"
+    "time"
+
+    "github.com/gin-gonic/gin"
+    "github.com/sirupsen/logrus"
+
+    "{{.module}}/config"
+    "{{.module}}/internal/api"
+    "{{.module}}/internal/server"
+)
+
+func Start(path string) error {
+    // init configuration
+    if err := config.Init(path); err != nil {
+        return err
+    }
+
+    conf := config.GetConfig()
+
+    // init database
+    db, err := dao.New{{.dao | FirstUpper}}Dao(logrus.StandardLogger(), &conf.Backend)
+    if err != nil {
+        return err
+    }
+
+    // init core server
+    srv, err := server.NewServer(db)
+    if err != nil {
+        return err
+    }
+    if err = srv.Start(); err != nil {
+        return err
+    }
+    defer srv.Close()
+
+    // start http server
+    httpSrv := initHttpServer(srv, conf)
+    go func() {
+        if hErr := httpSrv.ListenAndServe(); hErr != nil && hErr != http.ErrServerClosed {
+            logrus.Fatalf("listen: %s\n", hErr)
+        }
+    }()
+    logrus.Info(fmt.Sprintf("Server started, listening on %s", httpSrv.Addr))
+
+    // waiting for interrupt signal
+    quit := make(chan os.Signal, 1)
+    signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+    <-quit
+    logrus.Info("Shutting down server...")
+
+    ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+    defer cancel()
+    if err = httpSrv.Shutdown(ctx); err != nil {
+        logrus.Fatal("Server forced to shutdown: ", err)
+    }
+    return nil
+}
+
+func initHttpServer(srv *server.Server, conf *config.Config) *http.Server {
+    gin.SetMode(gin.ReleaseMode)
+    r := gin.New()
+    api.Route(srv, r)
+    httpSrv := &http.Server{
+        Addr: net.JoinHostPort(conf.Server.Host, strconv.Itoa(conf.Server.Port)),
+        Handler: r,
+    }
+    return httpSrv
+}

@@ -6,16 +6,7 @@ import (
 	"path/filepath"
 )
 
-var Workspace string
-
-func init() {
-	dir, err := os.Getwd()
-	if err == nil {
-		Workspace = dir
-	}
-}
-
-func CreateIfNotExist(path string) (*os.File, error) {
+func CreateFileIfNotExist(path string) (*os.File, error) {
 	if Exists(path) {
 		return nil, errors.New("file already exists")
 	}
@@ -28,10 +19,31 @@ func CreateIfNotExist(path string) (*os.File, error) {
 	return os.Create(path)
 }
 
+func MkdirIfNotExist(path string) error {
+	if _, err := os.Stat(path); err != nil && os.IsNotExist(err) {
+		return os.MkdirAll(path, os.ModePerm)
+	}
+	return nil
+}
+
 func Exists(path string) bool {
 	_, err := os.Stat(path)
 	if err == nil {
 		return true
 	}
 	return false
+}
+
+func WriteFile(path, content string) error {
+	f, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	_, err = f.WriteString(content)
+	if err != nil {
+		return err
+	}
+	return nil
 }

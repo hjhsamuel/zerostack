@@ -6,7 +6,7 @@ import (
 )
 
 func TestParseAPIFile(t *testing.T) {
-	var apiFilePath string = "../../cmd/example.api"
+	var apiFilePath string = "../../../cmd/example.api"
 
 	p, err := NewParser(apiFilePath)
 	if err != nil {
@@ -26,6 +26,9 @@ func TestParseAPIFile(t *testing.T) {
 		fmt.Println("========> Fields <=========")
 		for _, field := range item.Fields {
 			fmt.Printf("%#v\n", field)
+			for _, tag := range field.Tags {
+				fmt.Printf("=======> Tag: %#v\n", tag)
+			}
 		}
 	}
 	fmt.Println("============ Group ===============")

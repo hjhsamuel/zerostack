@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"strings"
 )
 
 type Parser struct {
@@ -128,7 +129,7 @@ func (p *Parser) parseType() (*TypeDef, error) {
 			p.ts.Next()
 
 			if p.ts.Peek().Type == TokenBacktick {
-				f.Tag = p.ts.Next().Value
+				f.Tags = p.parseTag(p.ts.Next().Value)
 			}
 			if p.ts.Peek().Type == TokenComment {
 				f.Comment = p.ts.Next().Value
@@ -142,6 +143,23 @@ func (p *Parser) parseType() (*TypeDef, error) {
 
 	p.ts.Next()
 	return t, nil
+}
+
+func (p *Parser) parseTag(data string) []*Tag {
+	parts := strings.FieldsFunc(data, func(r rune) bool {
+		return r == ' '
+	})
+
+	res := make([]*Tag, 0)
+	for _, part := range parts {
+		index := strings.Index(part, ":")
+		if index == -1 {
+			continue
+		}
+		val := strings.Trim(part[index+1:], "\"")
+		res = append(res, &Tag{Key: part[:index], Val: val})
+	}
+	return res
 }
 
 func (p *Parser) parseGroup() (*Group, error) {
@@ -359,6 +377,9 @@ func (p *Parser) parseDoc() (*DocAnnotation, error) {
 		}
 
 		if key.Value == "summary" {
+			if _, err = p.ts.Expect(TokenColon); err != nil {
+				return nil, err
+			}
 			val, err := p.ts.Expect(TokenString)
 			if err != nil {
 				return nil, err

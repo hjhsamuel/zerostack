@@ -1,0 +1,121 @@
+// Code generate by zerostack. Safe to edit.
+
+package config
+
+import (
+    "errors"
+    "os"
+    "path/filepath"
+    "sync"
+
+    "gopkg.in/yaml.v3"
+    "github.com/sirupsen/logrus"
+    "github.com/natefinch/lumberjack.v2"
+    "github.com/hjhsamuel/goenv"
+    "github.com/hjhsamuel/gocommon/database"
+    gp "github.com/hjhsamuel/gocommon/gin_plugin"
+)
+
+type Config struct {
+    Server ServerConfig `yaml:"server" env:"SERVER"`    // 服务配置
+    Log LogConfig `yaml:"log" env:"LOG"`    // 日志配置
+    Database database.BackendConfig `yaml:"database" env:"DATABASE"`    // 数据库配置
+}
+
+type ServerConfig struct {
+    Host string `yaml:"host" env:"HOST"`    // 监听地址
+    Port int `yaml:"port" env:"PORT"`   // 监听端口
+    Salt string `yaml:"salt" env:"SALT"`    // jwt密钥
+}
+
+type LogConfig struct {
+    Path string `yaml:"path" env:"PATH"`    // 日志文件路径
+    Level string `yaml:"level" env:"LEVEL"` // 日志等级
+    MaxSize int `yaml:"max_size" env:"MAXSIZE"` // 日志文件最大大小
+    MaxRolls int `yaml:"max_rolls" env:"MAXROLLS"`  // 最大日志文件数量
+}
+
+var gConf = &Config{
+    Server: ServerConfig{
+        Host: "0.0.0.0",
+        Port: 8080,
+        Salt: "dev",
+    },
+    Log: LogConfig{
+        Path: "log/zs.log",
+        Level: "info",
+        MaxSize: 50,
+        MaxRolls: 3,
+    },
+}
+
+var lock sync.RWMutex
+
+func GetConfig() *Config {
+    lock.RLock()
+    defer lock.RUnlock()
+
+    tmp := *gConf
+    return &tmp
+}
+
+func Init(path string) error {
+    lock.Lock()
+    defer lock.Unlock()
+
+    if path != "" {
+        content, err := os.ReadFile(path)
+        if err != nil {
+            return err
+        }
+
+        if err = yaml.Unmarshal(content, gConf); err != nil {
+            return err
+        }
+    } else {
+        parser := goenv.NewEnvParser()
+        if err := parser.Start(&gConf); err != nil {
+            return err
+        }
+    }
+
+    if err := initLog(); err != nil {
+        return err
+    }
+
+    gp.SetTokenSalt(gConf.Server.Salt)
+
+    return nil
+}
+
+func initLog() error {
+    if level, err := logrus.ParseLevel(gConf.Log.Level); err != nil {
+        return err
+    } else {
+        logrus.SetLevel(level)
+    }
+
+    if gConf.Log.Path != "" {
+        _ = os.MkdirAll(filepath.Dir(gConf.Log.Path), os.ModePerm)
+        if _, err := os.Stat(gConf.Log.Path); err != nil {
+            if errors.Is(err, os.ErrNotExist) {
+                _ = os.WriteFile(gConf.Log.Path, []byte(""), 644)
+            }
+        }
+        logrus.SetOutput(&lumberjack.Logger{
+            Filename: gConf.Log.Path,
+            MaxSize: gConf.Log.MaxSize,
+            MaxBackups: gConf.Log.MaxRolls,
+            LocalTime: true,
+            Compress: true,
+        })
+    }
+
+    f := &logrus.TextFormatter{
+        FullTimestamp: true,
+        TimestampFormat: "2006-01-02 15:04:05",
+    }
+    logrus.SetFormatter(f)
+
+    return nil
+}
