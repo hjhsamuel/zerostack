@@ -16,7 +16,7 @@ const (
 )
 
 func CreateConfigFile(base *entities.BaseInfo) error {
-	absConfigPath := filepath.Join(base.Home, base.Service, configFilePath)
+	absConfigPath := filepath.Join(base.SrvHome, configFilePath)
 	// file exists, skip generation
 	if file.Exists(absConfigPath) {
 		return nil

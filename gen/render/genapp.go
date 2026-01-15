@@ -16,7 +16,7 @@ const (
 )
 
 func CreateAppFile(base *entities.BaseInfo, database string) error {
-	absAppPath := filepath.Join(base.Home, base.Service, mainFilePath)
+	absAppPath := filepath.Join(base.SrvHome, mainFilePath)
 	if file.Exists(absAppPath) {
 		return nil
 	}

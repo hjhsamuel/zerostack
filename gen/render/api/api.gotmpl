@@ -7,8 +7,8 @@ import (
     gp "github.com/hjhsamuel/gocommon/gin_plugin"
 
     "{{.module}}/internal/server"
-    {{- range $index, $item := .syntaxs}}
-    {{$item.syntax}} "{{.module}}/internal/api/{{$item.syntax}}"
+    {{- range .syntaxs}}
+    {{.}} "{{.module}}/internal/api/{{.}}"
     {{- end}}
 )
 
@@ -19,7 +19,7 @@ func Route(srv *server.Server, e *gin.Engine) {
 
     group := e.Group("/{{.service}}")
 
-    {{- range $index, $item := .syntaxs}}
-    {{$item.syntax}}.Route(srv, group)
+    {{- range .syntaxs}}
+    {{.}}.Route(srv, group)
     {{- end}}
 }

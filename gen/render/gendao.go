@@ -25,14 +25,14 @@ const (
 
 func CreateDaoFile(base *entities.BaseInfo, database string) error {
 	// create dao file
-	absDaoPath := filepath.Join(base.Home, base.Service, daoFilePath)
+	absDaoPath := filepath.Join(base.SrvHome, daoFilePath)
 	if err := createDaoFile(absDaoPath); err != nil {
 		return err
 	}
 	// create database file
 	switch database {
 	case DatabaseMysql:
-		absMysqlPath := filepath.Join(base.Home, base.Service, mysqlFilePath)
+		absMysqlPath := filepath.Join(base.SrvHome, mysqlFilePath)
 		return createMysqlFile(absMysqlPath)
 	default:
 		return nil

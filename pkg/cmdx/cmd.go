@@ -1,4 +1,4 @@
-package gomod
+package cmdx
 
 import (
 	"bytes"
@@ -7,11 +7,16 @@ import (
 	"strings"
 )
 
-func InitService(dir, module string) (string, error) {
-	if _, err := exec.LookPath("go"); err != nil {
-		return "", err
+func Check(name string) bool {
+	_, err := exec.LookPath(name)
+	if err != nil {
+		return false
 	}
-	cmd := exec.Command("go", "mod", "init", module)
+	return true
+}
+
+func Run(dir string, name string, args ...string) (string, error) {
+	cmd := exec.Command(name, args...)
 	cmd.Dir = dir
 
 	var (

@@ -16,7 +16,7 @@ const (
 )
 
 func CreateMainFile(base *entities.BaseInfo) error {
-	absMainPath := filepath.Join(base.Home, base.Service, mainFilePath)
+	absMainPath := filepath.Join(base.SrvHome, mainFilePath)
 	if file.Exists(absMainPath) {
 		return nil
 	}
