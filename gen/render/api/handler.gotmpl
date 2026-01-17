@@ -1,0 +1,15 @@
+{{- range $name, $item := .group.handler}}
+
+// {{$name}}
+// @Summary {{$item.doc.summary}}
+// @Tags {{.group.route.tag}}
+// @Accept json
+// @Produce json
+// @Param req {{if eq $item.method "GET"}}query{{else}}body{{end}} {{$item.req}} true "请求参数"
+// @Success 200 {object} gp.Response{data={{$item.rsp}}}
+// @Router /{{.service}}/{{.syntax}}/{{.group.name}}{{$item.path | ToDocPath}} [{{$item.method}}]
+func (api *Api) {{$name}}(ctx *gp.Context, req {{$item.req}}) ({{$item.rsp}}, error) {
+    // TODO
+    panic("implement me")
+}
+{{- end}}

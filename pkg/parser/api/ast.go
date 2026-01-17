@@ -3,7 +3,7 @@ package api
 type APIDefinition struct {
 	Syntax string
 	Types  []*TypeDef
-	Groups []*Group
+	Group  *Group
 }
 
 type TypeDef struct {
@@ -43,7 +43,12 @@ type Handler struct {
 	Method   string
 	Path     string
 	ReqType  string
-	RspType  string
+	RspType  *Param
 	FuncName string
 	Doc      *DocAnnotation
+}
+
+type Param struct {
+	Base bool
+	Type string
 }

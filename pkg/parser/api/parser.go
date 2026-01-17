@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 )
@@ -59,11 +60,14 @@ func (p *Parser) Parse() (*APIDefinition, error) {
 		}
 
 		if tok.Type == TokenAt {
+			if api.Group != nil {
+				return nil, fmt.Errorf("found multiple group definitions")
+			}
 			g, err := p.parseGroup()
 			if err != nil {
 				return nil, err
 			}
-			api.Groups = append(api.Groups, g)
+			api.Group = g
 			continue
 		}
 
@@ -324,6 +328,9 @@ func (p *Parser) parseHandler() (*Handler, error) {
 	if err != nil {
 		return nil, err
 	}
+	if strings.HasPrefix(req.Value, ".") {
+		return nil, errors.New("request can not use basic data types")
+	}
 	if _, err := p.ts.Expect(TokenRParen); err != nil {
 		return nil, err
 	}
@@ -346,14 +353,26 @@ func (p *Parser) parseHandler() (*Handler, error) {
 		return nil, err
 	}
 
-	return &Handler{
+	handler := &Handler{
 		Method:   method.Value,
 		Path:     path.Value,
 		ReqType:  req.Value,
-		RspType:  rsp.Value,
 		FuncName: funcName.Value,
 		Doc:      doc,
-	}, nil
+	}
+	if strings.HasPrefix(rsp.Value, ".") {
+		handler.RspType = &Param{
+			Base: true,
+			Type: strings.TrimPrefix(rsp.Value, "."),
+		}
+	} else {
+		handler.RspType = &Param{
+			Base: false,
+			Type: rsp.Value,
+		}
+	}
+
+	return handler, nil
 }
 
 func (p *Parser) parseDoc() (*DocAnnotation, error) {

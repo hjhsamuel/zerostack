@@ -162,7 +162,7 @@ func isWhitespace(ch rune) bool {
 }
 
 func isLetter(ch rune) bool {
-	return unicode.IsLetter(ch) || ch == '_'
+	return unicode.IsLetter(ch) || ch == '_' || ch == '.'
 }
 
 func isDigit(ch rune) bool {

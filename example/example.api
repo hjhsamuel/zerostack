@@ -23,5 +23,5 @@ group user {
         summary: "获取用户详情"
     )
     @handler GetUser
-    get "/:id" (GetUserReq) returns (GetUserRsp)
+    get "/:id" (GetUserReq) returns (.string)
 }

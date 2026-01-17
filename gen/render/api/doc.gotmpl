@@ -1,8 +1,0 @@
-// {{.handler}}
-// @Summary {{.summary}}
-// @Tags {{.tag}}
-// @Accept json
-// @Produce json
-// @Param req {{if eq .method "GET"}}query{{else}}body{{end}} schema.{{.req}} true "请求参数"
-// @Success 200 {object} gp.Response{data=schema.{{.rsp}}}
-// @Router /{{.service}}/{{.syntax}}/{{.group}}{{.path}} [{{.method}}]

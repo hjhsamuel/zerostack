@@ -8,7 +8,7 @@ import (
 
     "{{.module}}/internal/server"
     {{- range .syntaxs}}
-    {{.}} "{{.module}}/internal/api/{{.}}"
+    {{.}} "{{.module}}/internal/api/{{.}}/handler"
     {{- end}}
 )
 

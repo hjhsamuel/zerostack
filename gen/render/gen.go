@@ -2,16 +2,18 @@ package render
 
 import (
 	"bytes"
+	"encoding/json"
 	"go/format"
 	"html/template"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/hjhsamuel/zerostack/gen/entities"
 	"github.com/hjhsamuel/zerostack/pkg/file"
 )
 
-func CreateGoTemplate(content, path string, params map[string]any) error {
+func CreateGoTemplate(content, path string, info *entities.GenInfo) error {
 	name := filepath.Base(path)
 	if err := file.MkdirIfNotExist(filepath.Dir(path)); err != nil {
 		return err
@@ -22,22 +24,15 @@ func CreateGoTemplate(content, path string, params map[string]any) error {
 	}
 	defer f.Close()
 
-	buffer := new(bytes.Buffer)
-	t := template.Must(template.New(name).
-		Funcs(template.FuncMap{
-			"FirstUpper": FirstUpper,
-		}).Parse(content))
-	err = t.Execute(buffer, params)
+	code, err := GetRenderedContent(name, content, info)
 	if err != nil {
 		return err
 	}
-
-	code := FormatGoCode(buffer.String())
 	_, err = f.WriteString(code)
 	return err
 }
 
-func OverwriteGoTemplate(content, path string, params map[string]any) error {
+func OverwriteGoTemplate(content, path string, info *entities.GenInfo) error {
 	name := filepath.Base(path)
 	if err := file.MkdirIfNotExist(filepath.Dir(path)); err != nil {
 		return err
@@ -48,19 +43,40 @@ func OverwriteGoTemplate(content, path string, params map[string]any) error {
 	}
 	defer f.Close()
 
+	code, err := GetRenderedContent(name, content, info)
+	if err != nil {
+		return err
+	}
+	_, err = f.WriteString(code)
+	return err
+}
+
+func GetRenderedContent(name, content string, info *entities.GenInfo) (string, error) {
+	body, err := json.Marshal(info)
+	if err != nil {
+		return "", err
+	}
+	var params map[string]any
+	if err = json.Unmarshal(body, &params); err != nil {
+		return "", err
+	}
+
+	return GetRenderedContentByParams(name, content, params)
+}
+
+func GetRenderedContentByParams(name, content string, params map[string]any) (string, error) {
 	buffer := new(bytes.Buffer)
 	t := template.Must(template.New(name).
 		Funcs(template.FuncMap{
 			"FirstUpper": FirstUpper,
+			"ToDocPath":  ToDocPath,
 		}).Parse(content))
-	err = t.Execute(buffer, params)
+	err := t.Execute(buffer, params)
 	if err != nil {
-		return err
+		return "", err
 	}
-
 	code := FormatGoCode(buffer.String())
-	_, err = f.WriteString(code)
-	return err
+	return code, nil
 }
 
 func FormatGoCode(content string) string {
@@ -76,4 +92,16 @@ func FirstUpper(s string) string {
 		return s
 	}
 	return strings.ToUpper(s[:1]) + s[1:]
+}
+
+func ToDocPath(s string) string {
+	parts := strings.FieldsFunc(s, func(r rune) bool {
+		return r == '/'
+	})
+	for index, part := range parts {
+		if strings.HasPrefix(part, ":") {
+			parts[index] = "{" + part[1:] + "}"
+		}
+	}
+	return "/" + strings.Join(parts, "/")
 }
