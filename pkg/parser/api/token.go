@@ -25,3 +25,8 @@ type Token struct {
 	Value string
 	Line  int
 }
+
+var customGroupKeywords = []string{
+	"api",
+	"router",
+}

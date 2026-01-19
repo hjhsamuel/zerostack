@@ -20,8 +20,9 @@ func CreateMainFile(base *entities.BaseInfo) error {
 	if file.Exists(absMainPath) {
 		return nil
 	}
-	return CreateGoTemplate(mainTpl, absMainPath, map[string]any{
-		"module":  base.Module,
-		"service": base.Service,
+
+	return CreateGoTemplate(mainTpl, absMainPath, &entities.GenInfo{
+		Module:  base.Module,
+		Service: base.Service,
 	})
 }

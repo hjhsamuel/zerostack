@@ -192,12 +192,18 @@ func (p *Parser) parseGroup() (*Group, error) {
 	if err != nil {
 		return nil, err
 	}
+	groupName := strings.ToLower(name.Value)
+	for _, item := range customGroupKeywords {
+		if item == groupName {
+			return nil, fmt.Errorf("invalid group name: %s", name.Value)
+		}
+	}
 
 	if _, err := p.ts.Expect(TokenLBrace); err != nil {
 		return nil, err
 	}
 
-	g := &Group{Name: name.Value, RouteMeta: route}
+	g := &Group{Name: groupName, RouteMeta: route}
 
 	for {
 		p.ts.SkipIgnorable()

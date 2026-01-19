@@ -2,6 +2,7 @@ package render
 
 import (
 	_ "embed"
+	"os"
 	"path/filepath"
 
 	"github.com/hjhsamuel/zerostack/gen/entities"
@@ -22,5 +23,11 @@ func CreateConfigFile(base *entities.BaseInfo) error {
 		return nil
 	}
 
-	return CreateGoTemplate(configTpl, absConfigPath, map[string]any{})
+	f, err := os.Create(absConfigPath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	_, err = f.WriteString(configTpl)
+	return err
 }

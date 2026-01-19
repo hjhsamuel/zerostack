@@ -14,8 +14,12 @@ type ApiFile struct {
 	Api  *api.APIDefinition
 }
 
+type SyntaxInfo struct {
+	Syntax string
+	Groups []*RouteInfo
+}
+
 type RouteInfo struct {
-	Syntax    string
 	GroupName string
 	Params    *GenInfo
 }

@@ -2,6 +2,7 @@ package render
 
 import (
 	_ "embed"
+	"os"
 	"path/filepath"
 
 	"github.com/hjhsamuel/zerostack/gen/entities"
@@ -44,7 +45,13 @@ func createDaoFile(path string) error {
 		return nil
 	}
 
-	return CreateGoTemplate(daoTpl, path, map[string]any{})
+	f, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	_, err = f.WriteString(daoTpl)
+	return err
 }
 
 func createMysqlFile(path string) error {
@@ -52,5 +59,11 @@ func createMysqlFile(path string) error {
 		return nil
 	}
 
-	return CreateGoTemplate(mysqlTpl, path, map[string]any{})
+	f, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	_, err = f.WriteString(mysqlTpl)
+	return err
 }

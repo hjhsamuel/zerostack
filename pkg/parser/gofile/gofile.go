@@ -17,7 +17,7 @@ func ParseGoFile(path string) (*token.FileSet, *ast.File, error) {
 	return fset, f, nil
 }
 
-func AstToGoCode(fset *token.FileSet, f *ast.File) (string, error) {
+func AstToGoCode(fset *token.FileSet, f any) (string, error) {
 	buf := new(bytes.Buffer)
 	if err := format.Node(buf, fset, f); err != nil {
 		return "", err
