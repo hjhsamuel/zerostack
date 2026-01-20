@@ -5,7 +5,10 @@ package api
 import (
     "github.com/gin-gonic/gin"
     gp "github.com/hjhsamuel/gocommon/gin_plugin"
+    swaggerFiles "github.com/swaggo/files"
+    ginSwagger "github.com/swaggo/gin-swagger"
 
+    _ "{{.module}}/docs"
     "{{.module}}/internal/server"
     {{- range .syntaxs}}
     {{.}} "{{.module}}/internal/api/{{.}}"
@@ -19,7 +22,13 @@ func Route(srv *server.Server, e *gin.Engine) {
 
     group := e.Group("/{{.service}}")
 
+    RegisterSwagger(group)
+
     {{- range .syntaxs}}
     {{.}}.Route(srv, group)
     {{- end}}
+}
+
+func RegisterSwagger(g *gin.RouterGroup) {
+    g.Get("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

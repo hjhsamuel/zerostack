@@ -1,5 +1,5 @@
 # zerostack
-A Go microservices framework based on go-zero
+A Go microservices framework based on [gin](https://github.com/gin-gonic/gin)
 
 ## Code Level
 

@@ -55,17 +55,17 @@ func ParseModfile(path string) (*modfile.File, error) {
 	return modfile.Parse("go.mod", content, nil)
 }
 
-func IsGoMod(dir string) (bool, error) {
+func IsGoMod(dir string) (bool, string, error) {
 	if _, err := os.Stat(dir); err != nil {
-		return false, err
+		return false, "", err
 	}
 
 	out, err := cmdx.Run(dir, "go", "env", "GOMOD")
 	if err != nil {
-		return false, err
+		return false, "", err
 	}
 	if out == "/dev/null" || out == "NUL" {
-		return false, nil
+		return false, "", nil
 	}
-	return true, nil
+	return true, out, nil
 }

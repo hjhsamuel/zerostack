@@ -123,3 +123,7 @@ func copyTo(src, dst string) error {
 	}
 	return nil
 }
+
+func RemoveAll(path string) error {
+	return os.RemoveAll(path)
+}
