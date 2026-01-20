@@ -2,7 +2,6 @@ package render
 
 import (
 	_ "embed"
-	"os"
 	"path/filepath"
 
 	"github.com/hjhsamuel/zerostack/gen/entities"
@@ -44,26 +43,18 @@ func createDaoFile(path string) error {
 	if file.Exists(path) {
 		return nil
 	}
-
-	f, err := os.Create(path)
-	if err != nil {
+	if err := file.MkdirIfNotExist(filepath.Dir(path)); err != nil {
 		return err
 	}
-	defer f.Close()
-	_, err = f.WriteString(daoTpl)
-	return err
+	return file.WriteFile(path, daoTpl)
 }
 
 func createMysqlFile(path string) error {
 	if file.Exists(path) {
 		return nil
 	}
-
-	f, err := os.Create(path)
-	if err != nil {
+	if err := file.MkdirIfNotExist(filepath.Dir(path)); err != nil {
 		return err
 	}
-	defer f.Close()
-	_, err = f.WriteString(mysqlTpl)
-	return err
+	return file.WriteFile(path, mysqlTpl)
 }

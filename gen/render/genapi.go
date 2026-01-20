@@ -276,7 +276,7 @@ func genHandlers(root string, info *entities.RouteInfo) error {
 	}
 	handlerMap := info.Params.Group.Handler
 
-	handlerPath := filepath.Join(root, info.Params.Syntax, info.GroupName+".go")
+	handlerPath := filepath.Join(root, info.Params.Syntax, "handler", info.GroupName+".go")
 	if file.Exists(handlerPath) {
 		copiedHandler := make(map[string]*entities.GenHandler)
 		for k, v := range handlerMap {
@@ -353,6 +353,9 @@ func genHandlers(root string, info *entities.RouteInfo) error {
 			}
 		}
 	} else {
+		if err := file.MkdirIfNotExist(filepath.Dir(handlerPath)); err != nil {
+			return err
+		}
 		importContent, err := GetRenderedContent(info.GroupName+".import", handlerImportTpl, info.Params)
 		if err != nil {
 			return err
@@ -361,9 +364,7 @@ func genHandlers(root string, info *entities.RouteInfo) error {
 		if err != nil {
 			return err
 		}
-		if err = os.WriteFile(handlerPath, []byte(importContent+handlerContent), os.ModePerm); err != nil {
-			return err
-		}
+		return file.WriteFile(handlerPath, importContent+handlerContent)
 	}
 	return nil
 }
@@ -586,6 +587,9 @@ func genRouter(root string, base *entities.BaseInfo, syntax string, groups []str
 		}
 		return nil
 	} else {
+		if err := file.MkdirIfNotExist(filepath.Dir(path)); err != nil {
+			return err
+		}
 		content, err := GetRenderedContentByParams("router", routerTpl, map[string]any{
 			"syntax": syntax,
 			"module": base.Module,
@@ -594,13 +598,7 @@ func genRouter(root string, base *entities.BaseInfo, syntax string, groups []str
 		if err != nil {
 			return err
 		}
-		f, err := os.Create(path)
-		if err != nil {
-			return err
-		}
-		defer f.Close()
-		_, err = f.WriteString(content)
-		return err
+		return file.WriteFile(path, content)
 	}
 }
 
@@ -680,6 +678,9 @@ func genRootApi(root string, base *entities.BaseInfo, syntaxs []string) error {
 		}
 		return nil
 	} else {
+		if err := file.MkdirIfNotExist(filepath.Dir(path)); err != nil {
+			return err
+		}
 		content, err := GetRenderedContentByParams("api", apiTpl, map[string]any{
 			"module":  base.Module,
 			"service": base.Service,
@@ -688,12 +689,6 @@ func genRootApi(root string, base *entities.BaseInfo, syntaxs []string) error {
 		if err != nil {
 			return err
 		}
-		f, err := os.Create(path)
-		if err != nil {
-			return err
-		}
-		defer f.Close()
-		_, err = f.WriteString(content)
-		return err
+		return file.WriteFile(path, content)
 	}
 }

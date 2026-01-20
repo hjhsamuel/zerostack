@@ -10,8 +10,8 @@ import (
 
     _ "{{.module}}/docs"
     "{{.module}}/internal/server"
-    {{- range .syntaxs}}
-    {{.}} "{{.module}}/internal/api/{{.}}"
+    {{- range $index, $syntax := .syntaxs}}
+    {{$syntax}} "{{$.module}}/internal/api/{{$syntax}}"
     {{- end}}
 )
 

@@ -2,7 +2,6 @@ package render
 
 import (
 	_ "embed"
-	"os"
 	"path/filepath"
 
 	"github.com/hjhsamuel/zerostack/gen/entities"
@@ -21,6 +20,9 @@ func CreateAppFile(base *entities.BaseInfo, database string) error {
 	if file.Exists(absAppPath) {
 		return nil
 	}
+	if err := file.MkdirIfNotExist(filepath.Dir(absAppPath)); err != nil {
+		return err
+	}
 	content, err := GetRenderedContentByParams("app", appTpl, map[string]any{
 		"module": base.Module,
 		"dao":    database,
@@ -28,11 +30,5 @@ func CreateAppFile(base *entities.BaseInfo, database string) error {
 	if err != nil {
 		return err
 	}
-	f, err := os.Create(absAppPath)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	_, err = f.WriteString(content)
-	return err
+	return file.WriteFile(absAppPath, content)
 }

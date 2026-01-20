@@ -8,4 +8,5 @@ type {{$item.name}} struct {
     {{$field.name}} {{$field.type}} {{if $field.tags}}`{{range $tindex, $tag := $field.tags}}{{if $tindex}} {{end}}{{$tag.key}}:"{{$tag.val}}"{{end}}`{{end}} {{if $field.comment}}// {{$field.comment}}{{end}}
 {{- end}}
 }
-{{- end}}
+
+{{end}}
