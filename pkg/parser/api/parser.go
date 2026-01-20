@@ -405,11 +405,14 @@ func (p *Parser) parseDoc() (*DocAnnotation, error) {
 			if _, err = p.ts.Expect(TokenColon); err != nil {
 				return nil, err
 			}
-			val, err := p.ts.Expect(TokenString)
-			if err != nil {
-				return nil, err
+
+			t := p.ts.Next()
+			switch t.Type {
+			case TokenString, TokenIdent:
+				doc.Summary = t.Value
+			default:
+				return nil, fmt.Errorf("line: %d: %s", t.Line, t.Value)
 			}
-			doc.Summary = val.Value
 		}
 	}
 

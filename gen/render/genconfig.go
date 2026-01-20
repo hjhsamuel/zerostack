@@ -2,6 +2,7 @@ package render
 
 import (
 	_ "embed"
+	"encoding/json"
 	"path/filepath"
 
 	"github.com/hjhsamuel/zerostack/gen/entities"
@@ -15,7 +16,7 @@ const (
 	configFilePath = "config/config.go"
 )
 
-func CreateConfigFile(base *entities.BaseInfo) error {
+func CreateConfigFile(base *entities.BaseInfo, info *entities.ConfigInfo) error {
 	absConfigPath := filepath.Join(base.SrvHome, configFilePath)
 	// file exists, skip generation
 	if file.Exists(absConfigPath) {
@@ -25,5 +26,21 @@ func CreateConfigFile(base *entities.BaseInfo) error {
 	if err := file.MkdirIfNotExist(filepath.Dir(absConfigPath)); err != nil {
 		return err
 	}
-	return file.WriteFile(absConfigPath, configTpl)
+
+	content, err := json.Marshal(info)
+	if err != nil {
+		return err
+	}
+	var params map[string]any
+	if err = json.Unmarshal(content, &params); err != nil {
+		return err
+	}
+	params["module"] = base.Module
+	params["service"] = base.Service
+
+	code, err := GetRenderedContentByParams("config", configTpl, params)
+	if err != nil {
+		return err
+	}
+	return file.WriteFile(absConfigPath, code)
 }

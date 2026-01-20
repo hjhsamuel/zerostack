@@ -37,15 +37,15 @@ type LogConfig struct {
 
 var gConf = &Config{
     Server: ServerConfig{
-        Host: "0.0.0.0",
-        Port: 8080,
-        Salt: "dev",
+        Host: "{{.config.server.host}}",
+        Port: {{.config.server.port}},
+        Salt: "{{.config.server.salt}}",
     },
     Log: LogConfig{
-        Path: "log/zs.log",
-        Level: "info",
+        Path: "log/{{.service}}.log",
+        Level: "{{.config.log.level}}",
         MaxSize: 50,
-        MaxRolls: 3,
+        MaxRolls: {{.config.log.rolls}},
     },
 }
 

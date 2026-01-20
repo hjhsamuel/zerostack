@@ -19,6 +19,16 @@ var (
 	VarStringDatabase string
 	// VarStringApiPath the api template path
 	VarStringApiPath string
+	// VarStringLogLevel log level
+	VarStringLogLevel string
+	// VarIntLogRolls max log files
+	VarIntLogRolls int
+	// VarStringHost serve host
+	VarStringHost string
+	// VarIntPort serve port
+	VarIntPort int
+	// VarStringJwtSalt the salt of jwt
+	VarStringJwtSalt string
 )
 
 func InitProject(_ *cobra.Command, _ []string) error {
@@ -55,7 +65,17 @@ func InitProject(_ *cobra.Command, _ []string) error {
 		goto Err
 	}
 	// generate config
-	if err = render.CreateConfigFile(base); err != nil {
+	if err = render.CreateConfigFile(base, &entities.ConfigInfo{
+		Server: entities.ServerInfo{
+			Host: VarStringHost,
+			Port: VarIntPort,
+			Salt: VarStringJwtSalt,
+		},
+		Log: entities.LogInfo{
+			Level:    VarStringLogLevel,
+			MaxRolls: VarIntLogRolls,
+		},
+	}); err != nil {
 		goto Err
 	}
 	// generate database

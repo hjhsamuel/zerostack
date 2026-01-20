@@ -98,6 +98,9 @@ func ToDocPath(s string) string {
 	parts := strings.FieldsFunc(s, func(r rune) bool {
 		return r == '/'
 	})
+	if len(parts) == 0 {
+		return ""
+	}
 	for index, part := range parts {
 		if strings.HasPrefix(part, ":") {
 			parts[index] = "{" + part[1:] + "}"

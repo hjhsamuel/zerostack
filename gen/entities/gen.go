@@ -9,6 +9,22 @@ type BaseInfo struct {
 	SrvHome   string
 }
 
+type ConfigInfo struct {
+	Server ServerInfo `json:"server"`
+	Log    LogInfo    `json:"log"`
+}
+
+type ServerInfo struct {
+	Host string `json:"host"`
+	Port int    `json:"port"`
+	Salt string `json:"salt"`
+}
+
+type LogInfo struct {
+	Level    string `json:"level"`
+	MaxRolls int    `json:"rolls"`
+}
+
 type ApiFile struct {
 	Path string
 	Api  *api.APIDefinition
