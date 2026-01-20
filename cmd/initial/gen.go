@@ -87,6 +87,11 @@ func InitProject(_ *cobra.Command, _ []string) error {
 		goto Err
 	}
 
+	fmt.Printf(`Initialize project
+	%s
+Success
+`, base.Module)
+
 	return nil
 
 Err:

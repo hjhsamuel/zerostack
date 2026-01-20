@@ -13,6 +13,6 @@ func {{.group.name}}(api *handler.Api, g *gin.RouterGroup) {
     group := g.Group("/{{.group.name}}")
 
     {{- range $name, $item := .group.handler}}
-    group.{{$item.method}}("{{$item.path}}", gp.GetHandler(api.{{$item.handler}}, {{$.group.auth}}))
+    group.{{$item.method}}("{{$item.path}}", gp.GetHandler(api.{{$item.handler}}, {{$.group.route.auth}}))
     {{- end}}
 }

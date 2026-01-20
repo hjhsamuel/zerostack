@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"go/format"
-	"html/template"
 	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
 
 	"github.com/hjhsamuel/zerostack/gen/entities"
 	"github.com/hjhsamuel/zerostack/pkg/file"

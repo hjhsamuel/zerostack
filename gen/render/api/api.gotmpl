@@ -30,5 +30,5 @@ func Route(srv *server.Server, e *gin.Engine) {
 }
 
 func RegisterSwagger(g *gin.RouterGroup) {
-    g.Get("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+    g.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

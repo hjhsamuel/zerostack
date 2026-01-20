@@ -6,9 +6,9 @@
 // @Accept json
 // @Produce json
 // @Param req {{if eq $item.method "GET"}}query{{else}}body{{end}} schema.{{$item.req}} true "请求参数"
-// @Success 200 {object} gp.Response{data={{if eq $item.rsp.base false}}schema.{{end}}{{$item.rsp}}}
+// @Success 200 {object} gp.Response{data={{if eq $item.rsp.base false}}schema.{{end}}{{$item.rsp.type}}}
 // @Router /{{$.service}}/{{$.syntax}}/{{$.group.name}}{{$item.path | ToDocPath}} [{{$item.method}}]
-func (api *Api) {{$name}}(ctx *gp.Context, req *schema.{{$item.req}}) ({{if eq $item.rsp.base false}}*schema.{{end}}{{$item.rsp}}, error) {
+func (api *Api) {{$name}}(ctx *gp.Context, req *schema.{{$item.req}}) ({{if eq $item.rsp.base false}}*schema.{{end}}{{$item.rsp.type}}, error) {
     // TODO
     panic("implement me")
 }

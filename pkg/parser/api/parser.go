@@ -360,7 +360,7 @@ func (p *Parser) parseHandler() (*Handler, error) {
 	}
 
 	handler := &Handler{
-		Method:   method.Value,
+		Method:   strings.ToUpper(method.Value),
 		Path:     path.Value,
 		ReqType:  req.Value,
 		FuncName: funcName.Value,

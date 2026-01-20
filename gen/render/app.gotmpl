@@ -18,6 +18,7 @@ import (
 
     "{{.module}}/config"
     "{{.module}}/internal/api"
+    "{{.module}}/internal/dao"
     "{{.module}}/internal/server"
 )
 
@@ -30,7 +31,7 @@ func Start(path string) error {
     conf := config.GetConfig()
 
     // init database
-    db, err := dao.New{{.dao | FirstUpper}}Dao(logrus.StandardLogger(), &conf.Backend)
+    db, err := dao.New{{.dao | FirstUpper}}Dao(logrus.StandardLogger(), &conf.Database)
     if err != nil {
         return err
     }
