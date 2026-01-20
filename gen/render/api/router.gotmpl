@@ -4,13 +4,13 @@ package {{.syntax}}
 
 import (
     "github.com/gin-gonic/gin"
-    gp "github.com/hjhsamuel/gocommon/gin_plugin"
+    "{{.module}}/internal/api/{{.syntax}}/handler"
 
     "{{.module}}/internal/server"
 )
 
 func Route(srv *server.Server, g *gin.RouterGroup) {
-    api := newApi(srv)
+    api := handler.NewApi(srv)
     group := g.Group("/{{.syntax}}")
 
     {{- range .groups}}

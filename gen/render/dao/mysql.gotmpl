@@ -28,7 +28,7 @@ func NewMysqlDao(log *logrus.Logger, info *database.BackendConfig) (Dao, error) 
     if len(info.Replicas) != 0 {
         // TODO
         // set replica models
-        opt.Replicase = &database.MysqlDialector{
+        opt.Replicas = &database.MysqlDialector{
             SourceInfo: database.SourceInfo{
                 Infos: info.Replicas,
             },

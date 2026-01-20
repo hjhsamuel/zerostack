@@ -16,7 +16,6 @@ package docs
 import "github.com/swaggo/swag"
 `
 	swaggerEmptyTpl = `//go:build !swagger
-// +build !swagger
 
 package docs
 `
